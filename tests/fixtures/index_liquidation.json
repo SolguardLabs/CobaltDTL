@@ -1,0 +1,71 @@
+{
+  "name": "index-liquidation",
+  "assets": [
+    {
+      "id": "usd",
+      "symbol": "USD",
+      "decimals": 6
+    }
+  ],
+  "accounts": [
+    {
+      "id": "maker",
+      "balances": {
+        "usd": 1200000
+      }
+    },
+    {
+      "id": "keeper",
+      "balances": {
+        "usd": 900000
+      }
+    }
+  ],
+  "vaults": [
+    {
+      "id": "cvUSD",
+      "asset": "usd",
+      "index": 1000000,
+      "policy": {
+        "mintFeeBps": 0,
+        "redemptionFeeBps": 0,
+        "liquidationPenaltyBps": 400,
+        "redemptionDelay": 1,
+        "batchLimit": 5
+      }
+    }
+  ],
+  "operations": [
+    {
+      "type": "deposit",
+      "account": "maker",
+      "vault": "cvUSD",
+      "amount": 600000
+    },
+    {
+      "type": "deposit",
+      "account": "keeper",
+      "vault": "cvUSD",
+      "amount": 300000
+    },
+    {
+      "type": "index",
+      "vault": "cvUSD",
+      "index": 1030000
+    },
+    {
+      "type": "rebalance",
+      "vault": "cvUSD",
+      "amount": 27000
+    },
+    {
+      "type": "liquidate",
+      "id": "liq-maker-1",
+      "account": "maker",
+      "vault": "cvUSD",
+      "reserve": 90000,
+      "penaltyBps": 500
+    }
+  ]
+}
+

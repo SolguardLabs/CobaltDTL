@@ -1,0 +1,92 @@
+{
+  "name": "base-cycle",
+  "assets": [
+    {
+      "id": "usd",
+      "symbol": "USD",
+      "decimals": 6,
+      "haircutBps": 50,
+      "dust": 1
+    }
+  ],
+  "accounts": [
+    {
+      "id": "alice",
+      "balances": {
+        "usd": 1000000
+      }
+    },
+    {
+      "id": "bob",
+      "balances": {
+        "usd": 800000
+      }
+    },
+    {
+      "id": "treasury",
+      "balances": {
+        "usd": 0
+      }
+    }
+  ],
+  "vaults": [
+    {
+      "id": "cvUSD",
+      "asset": "usd",
+      "label": "Cobalt USD Credit Vault",
+      "index": 1000000,
+      "policy": {
+        "mintFeeBps": 20,
+        "redemptionFeeBps": 10,
+        "redemptionDelay": 2,
+        "batchLimit": 8,
+        "maxTicketCredits": 300000,
+        "maxBatchPayout": 5000000
+      }
+    }
+  ],
+  "operations": [
+    {
+      "type": "deposit",
+      "account": "alice",
+      "vault": "cvUSD",
+      "amount": 500000
+    },
+    {
+      "type": "mint",
+      "account": "bob",
+      "vault": "cvUSD",
+      "reserve": 200000
+    },
+    {
+      "type": "transferCredit",
+      "account": "alice",
+      "to": "bob",
+      "vault": "cvUSD",
+      "credits": 50000
+    },
+    {
+      "type": "redeem",
+      "id": "ticket-bob-1",
+      "account": "bob",
+      "vault": "cvUSD",
+      "credits": 75000,
+      "minPayout": 10000
+    },
+    {
+      "type": "advance",
+      "epochs": 2
+    },
+    {
+      "type": "settle",
+      "vault": "cvUSD",
+      "limit": 4
+    },
+    {
+      "type": "sweepFees",
+      "account": "treasury",
+      "vault": "cvUSD"
+    }
+  ]
+}
+

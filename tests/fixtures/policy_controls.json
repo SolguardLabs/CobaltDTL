@@ -1,0 +1,69 @@
+{
+  "name": "policy-controls",
+  "assets": [
+    {
+      "id": "usd",
+      "symbol": "USD",
+      "decimals": 6
+    },
+    {
+      "id": "eur",
+      "symbol": "EUR",
+      "decimals": 6
+    }
+  ],
+  "accounts": [
+    {
+      "id": "ops",
+      "balances": {
+        "usd": 700000,
+        "eur": 600000
+      }
+    }
+  ],
+  "vaults": [
+    {
+      "id": "cvUSD",
+      "asset": "usd",
+      "index": 1000000,
+      "policy": {
+        "depositCap": 900000,
+        "minDeposit": 10000,
+        "mintFeeBps": 5,
+        "redemptionDelay": 1,
+        "batchLimit": 2
+      }
+    },
+    {
+      "id": "cvEUR",
+      "asset": "eur",
+      "index": 1000000,
+      "policy": {
+        "depositCap": 800000,
+        "minDeposit": 10000,
+        "mintFeeBps": 5,
+        "redemptionDelay": 1,
+        "batchLimit": 2
+      }
+    }
+  ],
+  "operations": [
+    {
+      "type": "deposit",
+      "account": "ops",
+      "vault": "cvUSD",
+      "amount": 300000
+    },
+    {
+      "type": "deposit",
+      "account": "ops",
+      "vault": "cvEUR",
+      "amount": 250000
+    },
+    {
+      "type": "checkpoint",
+      "note": "two vault checkpoint"
+    }
+  ]
+}
+

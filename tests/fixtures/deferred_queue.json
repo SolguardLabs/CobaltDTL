@@ -1,0 +1,86 @@
+{
+  "name": "deferred-queue",
+  "assets": [
+    {
+      "id": "usd",
+      "symbol": "USD",
+      "decimals": 6
+    }
+  ],
+  "accounts": [
+    {
+      "id": "alpha",
+      "balances": {
+        "usd": 1000000
+      }
+    },
+    {
+      "id": "beta",
+      "balances": {
+        "usd": 500000
+      }
+    }
+  ],
+  "vaults": [
+    {
+      "id": "cvUSD",
+      "asset": "usd",
+      "index": 1000000,
+      "policy": {
+        "mintFeeBps": 0,
+        "redemptionFeeBps": 25,
+        "redemptionDelay": 3,
+        "batchLimit": 1,
+        "maxTicketCredits": 200000,
+        "maxBatchPayout": 1000000
+      }
+    }
+  ],
+  "operations": [
+    {
+      "type": "deposit",
+      "account": "alpha",
+      "vault": "cvUSD",
+      "amount": 400000
+    },
+    {
+      "type": "deposit",
+      "account": "beta",
+      "vault": "cvUSD",
+      "amount": 200000
+    },
+    {
+      "type": "redeem",
+      "id": "ticket-alpha-1",
+      "account": "alpha",
+      "vault": "cvUSD",
+      "credits": 60000
+    },
+    {
+      "type": "redeem",
+      "id": "ticket-beta-1",
+      "account": "beta",
+      "vault": "cvUSD",
+      "credits": 50000
+    },
+    {
+      "type": "advance",
+      "epochs": 2
+    },
+    {
+      "type": "settle",
+      "vault": "cvUSD",
+      "limit": 4
+    },
+    {
+      "type": "advance",
+      "epochs": 1
+    },
+    {
+      "type": "settle",
+      "vault": "cvUSD",
+      "limit": 1
+    }
+  ]
+}
+

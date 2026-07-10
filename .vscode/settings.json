@@ -1,0 +1,11 @@
+{
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "out": true,
+    "node_modules": true,
+    "coverage": true
+  },
+  "C_Cpp.default.cppStandard": "c++17",
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
+

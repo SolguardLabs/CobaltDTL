@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run base fixture",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/out/cobaltdtl.exe",
+      "args": ["run", "tests/fixtures/base_cycle.json", "--json", "--events", "--pretty"],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build",
+      "console": "integratedTerminal"
+    }
+  ]
+}
+
