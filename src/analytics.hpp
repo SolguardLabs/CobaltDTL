@@ -1,5 +1,6 @@
 #pragma once
 
+#include "capital.hpp"
 #include "checks.hpp"
 
 namespace cobaltdtl {
@@ -17,6 +18,14 @@ struct VaultHealth {
     Amount reserveRatioBps{0};
     Amount feeShareBps{0};
     Amount queueShareBps{0};
+    Amount capitalLiability{0};
+    Amount effectiveReserve{0};
+    Amount stressedOutflows{0};
+    Amount requiredCapital{0};
+    Amount capitalDeficit{0};
+    Amount capitalCoverageBps{0};
+    Amount liquidityCoverageBps{0};
+    bool capitalCompliant{false};
     std::string status;
     std::vector<std::string> notes;
 };
@@ -92,6 +101,7 @@ class AnalyticsEngine {
     Amount accountCreditBookValue(const Ledger& ledger, const AccountState& account) const;
 
     PricingService pricing_;
+    CapitalEngine capital_;
     SanityChecker checker_;
 };
 

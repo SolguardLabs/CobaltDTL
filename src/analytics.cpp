@@ -52,6 +52,21 @@ std::vector<BatchPreview> AnalyticsEngine::batchPreviews(const Ledger& ledger) c
 
 VaultHealth AnalyticsEngine::buildVaultHealth(const VaultState& vault) const {
     const PriceSnapshot price = pricing_.snapshot(vault);
+    const Amount committedReserve = minAmount(
+        vault.realReserve,
+        checkedAdd(vault.protocolFees, vault.insuranceBuffer, "committed reserve"));
+    CapitalInput capitalInput;
+    capitalInput.vaultId = vault.id;
+    capitalInput.reserve = vault.realReserve;
+    capitalInput.liquidReserve = checkedSub(vault.realReserve, committedReserve, "liquid reserve");
+    capitalInput.issuedCredits = vault.issuedCredits;
+    capitalInput.pendingCredits = vault.pendingCredits;
+    capitalInput.index = vault.index;
+    capitalInput.reserveHaircutBps = vault.policy.reserveHaircutBps;
+    capitalInput.redemptionShockBps = vault.policy.redemptionShockBps;
+    capitalInput.operationalBufferBps = vault.policy.operationalBufferBps;
+    capitalInput.maturityEpochs = vault.policy.maturityEpochs;
+    const CapitalLine capital = capital_.assess(capitalInput);
     VaultHealth health;
     health.vaultId = vault.id;
     health.assetId = vault.assetId;
@@ -69,6 +84,16 @@ VaultHealth AnalyticsEngine::buildVaultHealth(const VaultState& vault) const {
     if (vault.issuedCredits > 0) {
         health.queueShareBps = mulDivFloor(vault.pendingCredits, kBps, vault.issuedCredits, "queue share");
     }
+    health.capitalLiability = capital.liability;
+    health.effectiveReserve = capital.effectiveReserve;
+    health.stressedOutflows = capital.stressedOutflows;
+    health.requiredCapital = capital.requiredCapital;
+    health.capitalDeficit = capital.capitalDeficit;
+    health.capitalCoverageBps = capital.coverageBps;
+    health.liquidityCoverageBps = capital.liquidityBps;
+    health.capitalCompliant = capital.capitalDeficit == 0 &&
+                              capital.coverageBps >= vault.policy.minimumCapitalCoverageBps &&
+                              capital.liquidityBps >= vault.policy.minimumLiquidityCoverageBps;
     health.status = classifyVault(price, vault);
     health.notes = vaultNotes(price, vault);
     return health;

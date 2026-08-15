@@ -5,17 +5,22 @@ import { spawnSync } from "node:child_process";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = join(root, "out");
-const exeName = process.platform === "win32" ? "cobaltdtl.exe" : "cobaltdtl";
-const output = join(outDir, exeName);
 const args = new Set(process.argv.slice(2));
 const warnings = args.has("--warnings");
 const clean = args.has("--clean");
+const unitTests = args.has("--unit-tests");
+const exeBase = unitTests ? "cobaltdtl-tests" : "cobaltdtl";
+const exeName = process.platform === "win32" ? `${exeBase}.exe` : exeBase;
+const output = join(outDir, exeName);
 
-const sources = [
+const applicationSources = [
   "src/common.cpp",
   "src/json.cpp",
   "src/model.cpp",
   "src/pricing.cpp",
+  "src/capital.cpp",
+  "src/sha256.cpp",
+  "src/governance.cpp",
   "src/risk.cpp",
   "src/ledger.cpp",
   "src/queue.cpp",
@@ -24,7 +29,12 @@ const sources = [
   "src/engine.cpp",
   "src/report.cpp",
   "src/main.cpp",
-].map((file) => join(root, file));
+];
+const testSources = [
+  ...applicationSources.filter((file) => file !== "src/main.cpp"),
+  "tests/cpp/unit_tests.cpp",
+];
+const sources = (unitTests ? testSources : applicationSources).map((file) => join(root, file));
 
 function tryRun(command, commandArgs, options = {}) {
   return spawnSync(command, commandArgs, {
@@ -50,6 +60,7 @@ function commandExists(command) {
 function findMsvcVcvars() {
   const candidates = [
     "C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\VC\\Auxiliary\\Build\\vcvars64.bat",
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat",
     "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
     "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat",
     "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat",
@@ -62,7 +73,8 @@ function compilerCandidates() {
   const explicit = process.env.CXX ? [process.env.CXX] : [];
   const native =
     process.platform === "win32" ? ["clang++", "g++", "c++", "cl"] : ["c++", "g++", "clang++"];
-  const discovered = process.platform === "win32" ? findMsvcVcvars().map((path) => `vcvars:${path}`) : [];
+  const discovered =
+    process.platform === "win32" ? findMsvcVcvars().map((path) => `vcvars:${path}`) : [];
   return [...explicit, ...native, ...discovered].filter(
     (value, index, array) => value && array.indexOf(value) === index,
   );
@@ -82,6 +94,7 @@ function buildWithMsvc(command) {
     "/EHsc",
     "/O2",
     "/D_CRT_SECURE_NO_WARNINGS",
+    "/I" + join(root, "src"),
     "/Fo" + msvcObjectDir(),
     "/Fe:" + output,
     ...sources,
@@ -98,6 +111,7 @@ function buildWithMsvcVcvars(vcvarsPath) {
     "/EHsc",
     "/O2",
     "/D_CRT_SECURE_NO_WARNINGS",
+    "/I" + join(root, "src"),
     "/Fo" + msvcObjectDir(),
     "/Fe:" + output,
     ...sources,
@@ -153,7 +167,9 @@ for (const compiler of compilerCandidates()) {
 }
 
 if (attempted.length === 0) {
-  console.error("No C++ compiler found. Install g++, clang++, c++, or run from a Visual Studio Developer Prompt.");
+  console.error(
+    "No C++ compiler found. Install g++, clang++, c++, or run from a Visual Studio Developer Prompt.",
+  );
 } else {
   console.error(`Compilation failed with: ${attempted.join(", ")}`);
 }

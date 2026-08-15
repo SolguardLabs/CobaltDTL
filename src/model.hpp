@@ -56,6 +56,12 @@ struct VaultPolicy {
     Amount mintFeeBps{0};
     Amount redemptionFeeBps{0};
     Amount liquidationPenaltyBps{500};
+    Amount reserveHaircutBps{0};
+    Amount redemptionShockBps{2'500};
+    Amount operationalBufferBps{50};
+    Amount minimumCapitalCoverageBps{10'500};
+    Amount minimumLiquidityCoverageBps{10'000};
+    Amount maturityEpochs{1};
     int redemptionDelay{1};
     int batchLimit{50};
     bool allowDeposits{true};

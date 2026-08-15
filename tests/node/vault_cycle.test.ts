@@ -29,4 +29,3 @@ test("reconciliation tracks active account credits plus queued tickets", () => {
   assert.equal(line?.balanced, true);
   assert.equal(line?.issuedCredits, line?.accountCredits);
 });
-

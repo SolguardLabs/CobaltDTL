@@ -23,4 +23,3 @@ test("liquidation burns participant credits and records keeper reserve", () => {
   assert.equal(amount(maker.reserves, "usd"), 510000);
   assert.equal(maker.liquidatedCredits, record.creditsBurned);
 });
-
