@@ -21,12 +21,14 @@ export type AccountReport = {
 export type VaultReport = {
   id: string;
   asset: string;
+  index: number;
   reserve: number;
   issuedCredits: number;
   pendingCredits: number;
   activeCredits: number;
   price: number;
   protocolFees: number;
+  lastPrice: number;
   policy?: {
     depositCap: number;
     minDeposit: number;
@@ -34,6 +36,18 @@ export type VaultReport = {
     maxBatchPayout: number;
     batchLimit: number;
   };
+};
+
+export type LiquidationReport = {
+  id: string;
+  vault: string;
+  account: string;
+  reserveIn: number;
+  creditsBurned: number;
+  penaltyCredits: number;
+  price: number;
+  epoch: number;
+  status: string;
 };
 
 export type TicketReport = {
@@ -52,6 +66,7 @@ export type CobaltReport = {
   vaults: VaultReport[];
   accounts: AccountReport[];
   tickets: TicketReport[];
+  liquidations: LiquidationReport[];
   metrics: Record<string, number>;
   reconciliation: Array<{
     vault: string;
@@ -64,7 +79,11 @@ export type CobaltReport = {
 };
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
-export const binary = join(root, "out", process.platform === "win32" ? "cobaltdtl.exe" : "cobaltdtl");
+export const binary = join(
+  root,
+  "out",
+  process.platform === "win32" ? "cobaltdtl.exe" : "cobaltdtl",
+);
 
 export function ensureBuilt(): void {
   if (existsSync(binary)) {

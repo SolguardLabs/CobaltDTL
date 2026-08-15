@@ -18,4 +18,3 @@ test("event output is opt-in and deterministic", () => {
   assert.equal(withEvents.events?.[0].type, "init");
   assert.equal(withEvents.events?.at(-1)?.type, "fee_sweep");
 });
-

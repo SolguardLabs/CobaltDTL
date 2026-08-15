@@ -23,4 +23,3 @@ test("queued accounting remains balanced after partial settlement", () => {
   assert.equal(line?.balanced, true);
   assert.equal(line?.queuedCredits, 50000);
 });
-

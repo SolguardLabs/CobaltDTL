@@ -201,6 +201,15 @@ VaultPolicy parseVaultPolicy(const JsonValue& value, const FieldPath& path) {
         policy.redemptionFeeBps = readOptAmount(*policyValue, "redemptionFeeBps", p, policy.redemptionFeeBps);
         policy.liquidationPenaltyBps =
             readOptAmount(*policyValue, "liquidationPenaltyBps", p, policy.liquidationPenaltyBps);
+        policy.reserveHaircutBps = readOptAmount(*policyValue, "reserveHaircutBps", p, policy.reserveHaircutBps);
+        policy.redemptionShockBps = readOptAmount(*policyValue, "redemptionShockBps", p, policy.redemptionShockBps);
+        policy.operationalBufferBps =
+            readOptAmount(*policyValue, "operationalBufferBps", p, policy.operationalBufferBps);
+        policy.minimumCapitalCoverageBps =
+            readOptAmount(*policyValue, "minimumCapitalCoverageBps", p, policy.minimumCapitalCoverageBps);
+        policy.minimumLiquidityCoverageBps =
+            readOptAmount(*policyValue, "minimumLiquidityCoverageBps", p, policy.minimumLiquidityCoverageBps);
+        policy.maturityEpochs = readOptAmount(*policyValue, "maturityEpochs", p, policy.maturityEpochs);
         policy.redemptionDelay = readOptInt(*policyValue, "redemptionDelay", p, policy.redemptionDelay);
         policy.batchLimit = readOptInt(*policyValue, "batchLimit", p, policy.batchLimit);
         policy.allowDeposits = readOptBool(*policyValue, "allowDeposits", p, policy.allowDeposits);
@@ -218,6 +227,11 @@ VaultPolicy parseVaultPolicy(const JsonValue& value, const FieldPath& path) {
     }
     if (policy.liquidationPenaltyBps < 0 || policy.liquidationPenaltyBps > kBps) {
         fail(ErrorCode::Validation, path.child("policy.liquidationPenaltyBps").str() + " must be between 0 and 10000");
+    }
+    if (policy.reserveHaircutBps < 0 || policy.reserveHaircutBps > kBps || policy.redemptionShockBps < 0 ||
+        policy.operationalBufferBps < 0 || policy.minimumCapitalCoverageBps <= 0 ||
+        policy.minimumLiquidityCoverageBps <= 0 || policy.maturityEpochs < 0) {
+        fail(ErrorCode::Validation, path.child("policy").str() + " contains an invalid capital parameter");
     }
     if (policy.redemptionDelay < 0) {
         fail(ErrorCode::Validation, path.child("policy.redemptionDelay").str() + " cannot be negative");

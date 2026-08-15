@@ -1,7 +1,8 @@
-out/
-node_modules/
-dist/
-coverage/
+.git
+node_modules
+out
 package-lock.json
-vulnerability.md
-
+assets
+tests/private
+src
+tests/cpp
