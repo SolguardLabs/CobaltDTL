@@ -15,7 +15,7 @@
     "ci": "npm run format:check && npm run check && npm run test && npm run verify:repo"
   },
   "devDependencies": {
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.7",
     "prettier": "^3.10.1",
     "typescript": "^7.0.2"
   },
